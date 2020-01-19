@@ -31,8 +31,10 @@ class PaddleModelConfigPaser {
         _channels(0),
         _use_gpu(0),
         _batch_size(1),
+        _trt_min_subgraph(3),
         _enable_trt(false),
         _target_short_size(0),
+        _pre_processor("DetectionPreProcessor"),
         _model_file_name("__model__"),
         _param_file_name("__params__"),
         _scaling_map{{"UNPADDING", 0},
@@ -51,6 +53,7 @@ class PaddleModelConfigPaser {
         _class_num = 0;
         _channels = 0;
         _use_gpu = 0;
+        _trt_min_subgraph = 3;
         _target_short_size = 0;
         _batch_size = 1;
         _model_file_name = "__model__";
@@ -161,13 +164,6 @@ class PaddleModelConfigPaser {
         } else {
             _param_file_name = "__params__";
         }
-        // 10. get pre_processor
-        if (config["DEPLOY"]["PRE_PROCESSOR"].IsDefined()) {
-            _pre_processor = config["DEPLOY"]["PRE_PROCESSOR"].as<std::string>();
-        } else {
-            std::cerr << "Please set PRE_PROCESSOR: \"DetectionPreProcessor\"" << std::endl;
-            return false;
-        }
         // 11. use_gpu
         if (config["DEPLOY"]["USE_GPU"].IsDefined()) { 
             _use_gpu = config["DEPLOY"]["USE_GPU"].as<int>();
@@ -223,6 +219,12 @@ class PaddleModelConfigPaser {
             _enable_trt &= _use_gpu;
         } else {
             _enable_trt = false;
+        }
+        // 21. trt_min_subgraph
+        if (config["DEPLOY"]["TRT_MIN_SUBGRAPH"].IsDefined()) {
+            _trt_min_subgraph = config["DEPLOY"]["TRT_MIN_SUBGRAPH"].as<int>();
+        } else {
+            _trt_min_subgraph = 3;
         }
         if (_enable_trt) {
             std::string trt_mode = "";
@@ -327,6 +329,7 @@ class PaddleModelConfigPaser {
     // bool enable_trt
     bool _enable_trt;
     // TRT Precision
+    int _trt_min_subgraph;
     paddle::AnalysisConfig::Precision _trt_precision;
 };
 }  // namespace PaddleSolution

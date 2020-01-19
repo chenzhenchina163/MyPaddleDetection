@@ -11,10 +11,10 @@ DEPLOY:
     IMAGE_TYPE: "rgb"
     NUM_CLASSES: 1
     CHANNELS : 3
-    PRE_PROCESSOR: "DetectionPreProcessor"
     PREDICTOR_MODE: "ANALYSIS"
     BATCH_SIZE : 3 
     RESIZE_MAX_SIZE: -1
     FEEDS_SIZE: 2
-    USE_TRT : 1 
+    USE_TRT : 0
+    TRT_MIN_SUBGRAPH : 3
     TRT_MODE : "FP16"
